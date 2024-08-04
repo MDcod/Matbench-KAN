@@ -1,0 +1,5 @@
+﻿kan~=0.0.2
+pandas~=2.2.2
+torch~=2.3.0
+pymatgen~=2024.5.31
+matminer~=0.9.2
