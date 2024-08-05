@@ -25,38 +25,33 @@ class MYKAN:
 
     def train_and_validate(self, train_inputs, train_outputs, test_inputs, test_outputs):
 
-       X = self.transformInput(train_inputs)
-       y = list(train_outputs);
+      #  X = self.transformInput(train_inputs)
+      #  y = list(train_outputs);
 
-       X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+      #  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-      #  X_train = self.transformInput(train_inputs)
-      #  X_test =  self.transformInput(test_inputs)
-      #  y_train = train_outputs
-      #  y_test = test_outputs
+       X_train = self.transformInput(train_inputs)
+       X_test =  self.transformInput(test_inputs)
+       y_train = train_outputs
+       y_test = test_outputs
 
-       self.kan = KAN(width=[X_train.shape[1], 30, 7, 1])
+       self.kan = KAN(width=[X_train.shape[1], [65, 26],  1], grid=5, k=3, seed=0)
 
        print(len(X_train[0]))
        print(len(X_test[0]))
 
-       train_input = torch.tensor(X_train, dtype=torch.float32)
-       train_label = torch.tensor(y_train, dtype=torch.float32)
-       test_input = torch.tensor(X_test, dtype=torch.float32)
-       test_label = torch.tensor(y_test, dtype=torch.float32)
-
        dataset = {
-          'train_input': train_input,
-          'train_label': train_label,
-          'test_input': test_input,
-          'test_label': test_label
+          'train_input': torch.tensor(X_train, dtype=torch.float32),
+          'train_label': torch.tensor(y_train, dtype=torch.float32).unsqueeze(1),
+          'test_input': torch.tensor(X_test, dtype=torch.float32),
+          'test_label': torch.tensor(y_test, dtype=torch.float32).unsqueeze(1)
        }
 
        self.kan(dataset['train_input'])
-       self.kan.plot()
+      #  self.kan.plot()
 
-       self.kan.fit(dataset, opt="LBFGS", steps=50, lamb=0.001)
-       self.kan.plot()
+       self.kan.fit(dataset, opt="LBFGS", steps=20, lamb=0.01, lamb_entropy=2.7876383801674827)
+      #  self.kan.plot()
 
     def predict(self, test_inputs):
       tensorInput = torch.tensor(self.transformInput(test_inputs), dtype=torch.float32)
@@ -108,5 +103,7 @@ for task in mb.tasks:
 
       # Record your data!
       task.record(fold, predictions)
+    
+    print(task.scores.mae.mean)
 # Save your results
-mb.to_file(f'my_models_benchmark-{datetime.now().strftime("%m-%d-%Y-%H-%M-%S")}.json.gz')
+mb.to_file(f'my_models_benchmark-{datetime.now().strftime("%m-%d-%Y-%H-%M-%S")}.json')
