@@ -1,0 +1,5 @@
+services:
+  kan:
+    image: mdcode/matbench-kan
+    volumes:
+      - .:/code

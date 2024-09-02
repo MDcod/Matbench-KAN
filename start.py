@@ -106,4 +106,4 @@ for task in mb.tasks:
     
     print(task.scores.mae.mean)
 # Save your results
-mb.to_file(f'my_models_benchmark-{datetime.now().strftime("%m-%d-%Y-%H-%M-%S")}.json')
+mb.to_file(f'benches/my_models_benchmark-{datetime.now().strftime("%m-%d-%Y-%H-%M-%S")}.json')
